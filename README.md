@@ -1,3 +1,3 @@
 ## Corkscrew
 
-Example client for [Botellier](https://github.com/danielrs/botellier) written in Go.
+Bare-bones client for a [Botellier](https://github.com/danielrs/botellier) server.

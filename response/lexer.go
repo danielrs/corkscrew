@@ -71,6 +71,7 @@ const (
 	FLOAT
 	SIMPLE_STRING
 	BULK_STRING
+	NIL
 
 	LIST
 	SET
@@ -178,7 +179,9 @@ func lexSimpleString(reader ByteReader) (Token, error) {
 
 func lexBulkString(reader ByteReader) (Token, error) {
 	len, err := readInt(reader)
-	if err == nil {
+	if err == nil && len == -1 {
+		return Token{NIL, []byte("nil")}, nil
+	} else if err == nil {
 
 		var buffer bytes.Buffer
 		for i := 0; i < len; i++ {

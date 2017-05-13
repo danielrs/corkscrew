@@ -27,7 +27,7 @@ func Serialize(str string) bytes.Buffer {
 
 func unquote(str string) string {
 	if len(str) > 0 {
-		if str[0] == '"' && str[len(str)-1] == '"' {
+		if len(str) > 1 && str[0] == '"' && str[len(str)-1] == '"' {
 			return str[1 : len(str)-1]
 		}
 	}

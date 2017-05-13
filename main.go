@@ -47,11 +47,11 @@ func loop(server net.Conn) {
 		// Sends message.
 		line := scanner.Text()
 		command := command.Serialize(line)
-		fmt.Printf("%q\n", command.String())
-		server.Write(command.Bytes())
 
-		// Reads response.
-		res, _ := response.Lex(server)
-		fmt.Println(res)
+		if command.Len() > 0 {
+			server.Write(command.Bytes())
+			res, _ := response.Lex(server)
+			fmt.Println(res)
+		}
 	}
 }
