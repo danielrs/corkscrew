@@ -82,6 +82,10 @@ type Token struct {
 	value     []byte
 }
 
+func (t *Token) IsOk() bool {
+	return string(t.value) == "OK"
+}
+
 func (t Token) String() string {
 	return string(t.value)
 }

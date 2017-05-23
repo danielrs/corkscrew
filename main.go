@@ -11,10 +11,6 @@ import (
 )
 
 func main() {
-	// reader := strings.NewReader("*2\r\n$3\r\none\r\n:2\r\n")
-	// token, err := response.Lex(reader)
-	// fmt.Println(token, err)
-	// return
 	args := os.Args[1:]
 
 	var addr = "127.0.0.1"
@@ -46,12 +42,17 @@ func loop(server net.Conn) {
 
 		// Sends message.
 		line := scanner.Text()
-		command := command.Serialize(line)
+		command := command.NewCommand(line)
+		serialized := command.Serialize()
 
-		if command.Len() > 0 {
-			server.Write(command.Bytes())
+		if serialized.Len() > 0 {
+			server.Write(serialized.Bytes())
 			res, _ := response.Lex(server)
 			fmt.Println(res)
+
+			if command.IsQuit() && len(res) > 0 && res[0].IsOk() {
+				return
+			}
 		}
 	}
 }

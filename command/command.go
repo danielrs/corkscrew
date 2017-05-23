@@ -4,16 +4,30 @@ import (
 	"bytes"
 	"regexp"
 	"strconv"
+	"strings"
 )
 
-func Serialize(str string) bytes.Buffer {
-	tokens := regexp.MustCompile("\".*\"|\\S+").FindAllString(str, -1)
+type Command struct {
+	tokens []string
+}
+
+func NewCommand(str string) Command {
+	return Command{
+		regexp.MustCompile("\".*\"|\\S+").FindAllString(str, -1),
+	}
+}
+
+func (command *Command) IsQuit() bool {
+	return len(command.tokens) > 0 && strings.ToUpper(command.tokens[0]) == "QUIT"
+}
+
+func (command *Command) Serialize() bytes.Buffer {
 	var buffer bytes.Buffer
-	if len(tokens) > 0 {
+	if len(command.tokens) > 0 {
 		buffer.WriteString("*")
-		buffer.WriteString(strconv.Itoa(len(tokens)))
+		buffer.WriteString(strconv.Itoa(len(command.tokens)))
 		buffer.WriteString("\r\n")
-		for _, tok := range tokens {
+		for _, tok := range command.tokens {
 			tok = unquote(tok)
 			buffer.WriteString("$")
 			buffer.WriteString(strconv.Itoa(len(tok)))
