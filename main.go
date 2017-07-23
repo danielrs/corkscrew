@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"net"
 	"os"
 
@@ -40,19 +41,25 @@ func loop(server net.Conn) {
 			return
 		}
 
-		// Sends message.
+		// Reads message from user.
 		line := scanner.Text()
 		command := command.NewCommand(line)
 		serialized := command.Serialize()
+		if serialized.Len() <= 0 {
+			continue
+		}
 
-		if serialized.Len() > 0 {
-			server.Write(serialized.Bytes())
-			res, _ := response.Lex(server)
+		// Sends message to the server.
+		server.Write(serialized.Bytes())
+		if res, err := response.Lex(server); err == nil {
 			fmt.Println(res)
-
 			if command.IsQuit() && len(res) > 0 && res[0].IsOk() {
 				return
 			}
+		} else if err == io.EOF {
+			fmt.Println("Lost connection to server...")
+		} else {
+			fmt.Println(err)
 		}
 	}
 }

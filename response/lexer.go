@@ -118,7 +118,7 @@ func Lex(r io.Reader) ([]Token, error) {
 		}
 	}
 
-	return []Token{}, eofError(reader.index)
+	return []Token{}, err
 }
 
 // Private lexing functions.
