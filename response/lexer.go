@@ -87,7 +87,12 @@ func (t *Token) IsOk() bool {
 }
 
 func (t Token) String() string {
-	return string(t.value)
+	switch t.tokenType {
+	case SIMPLE_STRING, BULK_STRING:
+		return fmt.Sprintf("%q", t.value)
+	default:
+		return string(t.value)
+	}
 }
 
 func Lex(r io.Reader) ([]Token, error) {
